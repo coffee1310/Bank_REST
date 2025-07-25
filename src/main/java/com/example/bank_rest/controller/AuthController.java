@@ -1,5 +1,6 @@
 package com.example.bank_rest.controller;
 
+import com.example.bank_rest.dto.AuthRequest;
 import com.example.bank_rest.dto.AuthResponse;
 import com.example.bank_rest.dto.UserDTO;
 import com.example.bank_rest.entity.User;
@@ -33,5 +34,11 @@ public class AuthController {
         } catch (UsernameAlreadyExistsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody @Valid AuthRequest request) {
+        AuthResponse authResponse = authService.authenticate(request);
+        return ResponseEntity.ok(authResponse);
     }
 }
