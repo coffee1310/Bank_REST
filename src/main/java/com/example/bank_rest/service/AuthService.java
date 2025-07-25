@@ -24,21 +24,15 @@ public class AuthService {
     public AuthResponse register(UserDTO userDTO) throws UsernameAlreadyExistsException {
         User user = userService.registerNewUser(userDTO).get();
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        userDTO.getUsername(),
-                        userDTO.getPassword()
-                )
-        );
+        // 2. Генерируем токен напрямую (без authenticationManager)
+        String jwt = jwtService.generateTokenForUser(user);
 
-        String jwt = jwtService.generateToken(authentication);
-
-        AuthResponse response = new AuthResponse();
-        response.setToken(jwt);
-        response.setUsername(user.getUsername());
-        response.setRole(user.getRole());
-        response.setExpiresIn(jwtService.getExpiration());
-
-        return response;
+        // 3. Формируем ответ
+        return AuthResponse.builder()
+                .token(jwt)
+                .username(user.getUsername())
+                .role(user.getRole())
+                .expiresIn(jwtService.getExpiration())
+                .build();
     }
 }

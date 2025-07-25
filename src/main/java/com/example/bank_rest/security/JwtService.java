@@ -61,6 +61,20 @@ public class JwtService {
                 .compact();
     }
 
+    public String generateTokenForUser(User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("username", user.getUsername());
+        claims.put("role", user.getRole());
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(user.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
+                .signWith(getSecretKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
