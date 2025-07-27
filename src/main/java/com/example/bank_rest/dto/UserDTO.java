@@ -26,6 +26,11 @@ public class UserDTO implements Validatable {
 
     @NotNull
     @NotBlank
+    @Size(min = 3)
+    private String name;
+
+    @NotNull
+    @NotBlank
     private String role;
 
     @Override

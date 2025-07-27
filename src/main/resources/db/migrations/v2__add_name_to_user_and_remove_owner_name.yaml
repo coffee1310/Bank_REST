@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_name_to_user_and_remove_owner_name
+      author: anton.golovin
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  type: VARCHAR(128)
+                  constraints:
+                    nullable: true
+
+        - dropColumn:
+            tableName: cards
+            columnName: owner_name

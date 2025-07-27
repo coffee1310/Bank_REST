@@ -2,3 +2,5 @@ databaseChangeLog:
   - include:
       file: v1__initial_schema.yaml
       relativeToChangelogFile: true
+  - include:
+      file: db/migrations/v2__add_name_to_user_and_remove_owner_name.yaml

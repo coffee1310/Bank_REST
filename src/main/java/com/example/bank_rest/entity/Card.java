@@ -26,9 +26,6 @@ public class Card {
     @Column(name = "masked_number", nullable = false)
     private String maskedNumber;
 
-    @Column(name = "owner_name", nullable = false)
-    private String ownerName;
-
     @Column(name = "expiry_date", nullable = false)
     private Date expiryDate;
 
