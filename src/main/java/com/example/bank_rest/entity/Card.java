@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Objects;
@@ -33,7 +34,7 @@ public class Card {
     private String status;
 
     @Column(name = "balance", nullable = false, precision = 15, scale = 2)
-    private DecimalFormat balance;
+    private BigDecimal balance;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

@@ -4,6 +4,7 @@ import com.example.bank_rest.dto.AuthRequest;
 import com.example.bank_rest.dto.AuthResponse;
 import com.example.bank_rest.dto.UserDTO;
 import com.example.bank_rest.entity.User;
+import com.example.bank_rest.exception.UserDoesNotExistException;
 import com.example.bank_rest.exception.UsernameAlreadyExistsException;
 import com.example.bank_rest.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthResponse register(UserDTO userDTO) throws UsernameAlreadyExistsException {
+    public AuthResponse register(UserDTO userDTO) throws UsernameAlreadyExistsException, UserDoesNotExistException {
         User user = userService.registerNewUser(userDTO).get();
 
         String jwt = jwtService.generateTokenForUser(user);

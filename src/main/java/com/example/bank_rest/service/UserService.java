@@ -2,6 +2,7 @@ package com.example.bank_rest.service;
 
 import com.example.bank_rest.dto.UserDTO;
 import com.example.bank_rest.entity.User;
+import com.example.bank_rest.exception.UserDoesNotExistException;
 import com.example.bank_rest.exception.UsernameAlreadyExistsException;
 import com.example.bank_rest.repository.UserRepository;
 import com.example.bank_rest.util.converter.DTOConverterFactory;
@@ -21,7 +22,7 @@ public class UserService {
     private final DTOConverterFactory converterFactory;
 
     @Transactional
-    public Optional<User> registerNewUser(UserDTO userDTO) throws UsernameAlreadyExistsException {
+    public Optional<User> registerNewUser(UserDTO userDTO) throws UsernameAlreadyExistsException, UserDoesNotExistException {
         if (userRepository.existsUserByUsername(userDTO.getUsername())) {
             throw new UsernameAlreadyExistsException("Username already exists");
         }

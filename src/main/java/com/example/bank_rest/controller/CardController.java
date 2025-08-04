@@ -3,11 +3,13 @@ package com.example.bank_rest.controller;
 import com.example.bank_rest.dto.CardDTO;
 import com.example.bank_rest.entity.Card;
 import com.example.bank_rest.repository.CardRepository;
+import com.example.bank_rest.service.CardService;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +21,10 @@ import java.util.List;
 public class CardController {
 
     private final CardRepository cardRepository;
+    private final CardService cardService;
 
     @GetMapping("/cards")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<?> getCards() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -29,8 +32,11 @@ public class CardController {
         return new ResponseEntity<>(cards, HttpStatusCode.valueOf(200));
     }
 
-//    @PostMapping
-//    @PreAuthorize("hasRole('ADMIN')")
-//    public ResponseEntity<?> createCard(@RequestBody CardDTO cardDTO) {
-//    }
+    @PostMapping("/card")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> createCard(@RequestBody CardDTO cardDTO) throws Exception {
+        Card card = cardService.createCard(cardDTO);
+
+        return new ResponseEntity<>(card, HttpStatusCode.valueOf(200));
+    }
 }

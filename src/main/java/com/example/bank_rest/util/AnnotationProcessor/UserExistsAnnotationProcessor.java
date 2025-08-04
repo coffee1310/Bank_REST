@@ -18,7 +18,6 @@ public class UserExistsAnnotationProcessor implements BeanPostProcessor {
 
     private final UserRepository userRepository;
 
-
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         Class<?> clazz = bean.getClass();

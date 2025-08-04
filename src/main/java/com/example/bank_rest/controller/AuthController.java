@@ -4,6 +4,7 @@ import com.example.bank_rest.dto.AuthRequest;
 import com.example.bank_rest.dto.AuthResponse;
 import com.example.bank_rest.dto.UserDTO;
 import com.example.bank_rest.entity.User;
+import com.example.bank_rest.exception.UserDoesNotExistException;
 import com.example.bank_rest.exception.UsernameAlreadyExistsException;
 import com.example.bank_rest.repository.UserRepository;
 import com.example.bank_rest.service.AuthService;
@@ -26,7 +27,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registration(@RequestBody @Valid UserDTO userDTO)  {
+    public ResponseEntity<?> registration(@RequestBody @Valid UserDTO userDTO) throws UserDoesNotExistException {
         userDTO.validate();
         try {
             AuthResponse authResponse = authService.register(userDTO);
