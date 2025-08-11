@@ -24,7 +24,7 @@ public class CardController {
     private final CardService cardService;
 
     @GetMapping("/cards")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> getCards() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -33,7 +33,7 @@ public class CardController {
     }
 
     @PostMapping("/card")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createCard(@RequestBody CardDTO cardDTO) throws Exception {
         Card card = cardService.createCard(cardDTO);
 

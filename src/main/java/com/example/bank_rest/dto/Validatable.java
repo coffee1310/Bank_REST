@@ -1,5 +1,7 @@
 package com.example.bank_rest.dto;
 
+import jakarta.validation.Validator;
+
 public interface Validatable {
-    public void validate();
+    void validate(Validator validator);
 }

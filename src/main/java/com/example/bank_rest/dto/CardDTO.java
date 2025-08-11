@@ -18,7 +18,7 @@ public class CardDTO implements Validatable {
     private Long id;
 
     @NotBlank
-    @Size(min = 19, max = 19)
+    @Pattern(regexp = "^\\d{4} \\d{4} \\d{4} \\d{4}$")
     private String card_number;
 
     @Future
@@ -34,14 +34,11 @@ public class CardDTO implements Validatable {
     private String status;
 
     @NotNull
-    private String MaskedNumber;
+    private String maskedNumber;
 
     @Override
-    public void validate() {
-        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-        Validator validator = validatorFactory.getValidator();
+    public void validate(Validator validator) {
         Set<ConstraintViolation<CardDTO>> violations = validator.validate(this);
-
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }

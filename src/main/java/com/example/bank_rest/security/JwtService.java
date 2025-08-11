@@ -18,6 +18,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -61,21 +62,24 @@ public class JwtService {
                 .compact();
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, User user) {
         Map<String, Object> claims = new HashMap<>();
 
+        // Стандартные claims из UserDetails
         claims.put("sub", userDetails.getUsername());
-        claims.put("iat", new Date());
-        claims.put("exp", new Date(System.currentTimeMillis() + expiration));
-
-        claims.put("username", userDetails.getUsername());
         claims.put("authorities", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
 
+        // Дополнительные claims из вашей сущности User
+        claims.put("userId", user.getId());
+        claims.put("customRole", user.getRole());
+
         return Jwts.builder()
                 .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS256, getSigningKey())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
+                .signWith(getSecretKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 

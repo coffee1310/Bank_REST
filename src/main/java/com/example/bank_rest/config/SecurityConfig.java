@@ -1,5 +1,6 @@
 package com.example.bank_rest.config;
 
+import com.example.bank_rest.repository.UserRepository;
 import com.example.bank_rest.security.InitialAuthenticationFilter;
 import com.example.bank_rest.security.JwtAuthenticationFilter;
 import com.example.bank_rest.security.JwtService;
@@ -28,13 +29,16 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
     public SecurityConfig(CustomUserDetailsService userDetailsService,
                           JwtAuthenticationFilter jwtAuthenticationFilter,
-                          JwtService jwtService) {
+                          JwtService jwtService,
+                          UserRepository userRepository) {
         this.userDetailsService = userDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.jwtService = jwtService;
+        this.userRepository = userRepository;
     }
 
     @Bean
@@ -54,7 +58,9 @@ public class SecurityConfig {
     public InitialAuthenticationFilter initialAuthenticationFilter() throws Exception {
         InitialAuthenticationFilter filter = new InitialAuthenticationFilter(
                 authenticationManager(),
-                jwtService
+                jwtService,
+                userRepository
+
         );
         filter.setFilterProcessesUrl("/api/auth/login");
         return filter;

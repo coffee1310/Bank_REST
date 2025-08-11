@@ -34,9 +34,7 @@ public class UserDTO implements Validatable {
     private String role;
 
     @Override
-    public void validate() {
-        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-        Validator validator = validatorFactory.getValidator();
+    public void validate(Validator validator) {
         Set<ConstraintViolation<UserDTO>> violations = validator.validate(this);
 
         if (!violations.isEmpty()) {

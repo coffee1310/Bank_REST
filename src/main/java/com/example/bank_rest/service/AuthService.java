@@ -6,6 +6,7 @@ import com.example.bank_rest.dto.UserDTO;
 import com.example.bank_rest.entity.User;
 import com.example.bank_rest.exception.UserDoesNotExistException;
 import com.example.bank_rest.exception.UsernameAlreadyExistsException;
+import com.example.bank_rest.repository.UserRepository;
 import com.example.bank_rest.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
     public AuthResponse register(UserDTO userDTO) throws UsernameAlreadyExistsException, UserDoesNotExistException {
         User user = userService.registerNewUser(userDTO).get();
@@ -41,24 +44,26 @@ public class AuthService {
     }
 
     public AuthResponse authenticate(AuthRequest authRequest) {
-        Authentication authentication =authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authRequest.getUsername(),
-                        passwordEncoder.encode(authRequest.getPassword())
+                        authRequest.getPassword() // Не кодируем - AuthenticationManager сделает это
                 )
         );
 
+        // Получаем и UserDetails, и вашу сущность User
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String jwt = jwtService.generateToken(userDetails);
+        User user = userRepository.findUserByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        String role = userDetails.getAuthorities().stream()
-                .findFirst()
-                .map(GrantedAuthority::getAuthority)
-                .orElse("USER");
+        // Генерируем токен с учетом и UserDetails, и вашей сущности
+        String jwt = jwtService.generateToken(userDetails, user);
+
+        String role = user.getRole(); // Берем роль из вашей сущности
 
         return AuthResponse.builder()
                 .token(jwt)
-                .username(userDetails.getUsername())
+                .username(user.getUsername())
                 .role(role)
                 .expiresIn(jwtService.getExpiration())
                 .build();

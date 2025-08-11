@@ -1,6 +1,8 @@
 package com.example.bank_rest.security;
 
 import com.example.bank_rest.dto.UserDTO;
+import com.example.bank_rest.entity.User;
+import com.example.bank_rest.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StreamUtils;
 
@@ -18,10 +21,12 @@ public class InitialAuthenticationFilter extends UsernamePasswordAuthenticationF
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
-    public InitialAuthenticationFilter(AuthenticationManager authenticationManager, JwtService jwtService) {
+    public InitialAuthenticationFilter(AuthenticationManager authenticationManager, JwtService jwtService, UserRepository userRepository) {
         super(authenticationManager);
         this.jwtService = jwtService;
+        this.userRepository = userRepository;
         setFilterProcessesUrl("/api/auth/login");
     }
 
@@ -62,7 +67,12 @@ public class InitialAuthenticationFilter extends UsernamePasswordAuthenticationF
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication authResult) throws IOException {
-        String jwt = jwtService.generateToken(authResult);
+        UserDetails userDetails = (UserDetails) authResult.getPrincipal();
+        User user = userRepository.findUserByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String jwt = jwtService.generateToken(userDetails, user);
+
         response.addHeader("Authorization", "Bearer " + jwt);
         response.setContentType("application/json");
         response.getWriter().write("{\"token\":\"" + jwt + "\"}");

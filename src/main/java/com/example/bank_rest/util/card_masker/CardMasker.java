@@ -6,6 +6,6 @@ import org.springframework.stereotype.Component;
 public class CardMasker implements IMasker {
     @Override
     public String mask(String card_number) {
-        return "**** **** **** " + card_number.substring(12);
+        return "**** **** **** " + card_number.substring(15);
     }
 }

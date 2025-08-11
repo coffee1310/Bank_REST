@@ -28,7 +28,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registration(@RequestBody @Valid UserDTO userDTO) throws UserDoesNotExistException {
-        userDTO.validate();
         try {
             AuthResponse authResponse = authService.register(userDTO);
             return ResponseEntity.ok(authResponse);
