@@ -24,6 +24,8 @@ public class UserExistsValidator implements ConstraintValidator<UserExists, Long
             return false;
         }
 
-        return userRepository.existsById(userId);
+        boolean userExists = userRepository.existsById(userId);
+
+        return userExists;
     }
 }

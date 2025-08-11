@@ -22,7 +22,7 @@ public class CardConverter implements EntityConverter<Card, CardDTO> {
         card.setId(dto.getId());
         card.setCardNumber(dto.getCard_number());
         card.setStatus(dto.getStatus());
-        card.setUser(getUser(dto.getId()));
+        card.setUser(getUser(dto.getUser_id()));
         card.setBalance(dto.getBalance());
         card.setExpiryDate(dto.getExpiry_date());
         card.setMaskedNumber(dto.getMaskedNumber());
@@ -31,6 +31,6 @@ public class CardConverter implements EntityConverter<Card, CardDTO> {
     }
 
     private User getUser(Long id) throws UserDoesNotExistException {
-        return userRepository.findUsersById(id).orElseThrow(() -> new UserDoesNotExistException(""));
+        return userRepository.findUsersById(id).orElseThrow(() -> new UserDoesNotExistException("User with this id doesn't exist"));
     }
 }
