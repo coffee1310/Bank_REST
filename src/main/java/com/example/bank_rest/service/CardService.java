@@ -18,7 +18,11 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import io.vavr.control.Try;
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +32,10 @@ public class CardService {
     private final CardMasker cardMasker;
     private final AesCardEncryptor aesCardEncryptor;
     private final Validator validator;
-    
-    public Card createCard(CardDTO dto) throws Exception {
+
+    private final CardRepository cardRepository;
+
+    public CardDTO createCard(CardDTO dto) throws Exception {
         dto.setMaskedNumber(cardMasker.mask(dto.getCard_number()));
         dto.setCard_number(dto.getCard_number());
         dto.setStatus("ACTIVE");
@@ -40,8 +46,18 @@ public class CardService {
         dto.setCard_number(aesCardEncryptor.encrypt(dto.getCard_number()));
         EntityConverter<Card, CardDTO> converter = converterFactory.getConverter(Card.class, CardDTO.class);
 
-        return converter.toEntity(dto);
+        Card card = converter.toEntity(dto);
+        cardRepository.save(card);
+        return dto;
     }
 
+    public List<CardDTO> getCards(String username) throws UserDoesNotExistException {
+        EntityConverter<Card, CardDTO> converter = converterFactory.getConverter(Card.class, CardDTO.class);
 
+        return cardRepository.getCardsByUser_Username(username).stream()
+                .map(card -> Try.of(() -> converter.toDto(card))
+                .toJavaOptional())
+                .filter(Optional::isPresent)
+                .map(Optional::get).toList();
+    }
 }

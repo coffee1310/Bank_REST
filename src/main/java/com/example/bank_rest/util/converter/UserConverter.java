@@ -2,6 +2,7 @@ package com.example.bank_rest.util.converter;
 
 import com.example.bank_rest.dto.UserDTO;
 import com.example.bank_rest.entity.User;
+import com.example.bank_rest.exception.UserDoesNotExistException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,5 +17,10 @@ public class UserConverter implements EntityConverter<User, UserDTO> {
         user.setRole(dto.getRole());
 
         return user;
+    }
+
+    @Override
+    public UserDTO toDto(User entity) throws UserDoesNotExistException {
+        return null;
     }
 }

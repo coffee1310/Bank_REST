@@ -2,6 +2,7 @@ package com.example.bank_rest.controller;
 
 import com.example.bank_rest.dto.CardDTO;
 import com.example.bank_rest.entity.Card;
+import com.example.bank_rest.exception.UserDoesNotExistException;
 import com.example.bank_rest.repository.CardRepository;
 import com.example.bank_rest.service.CardService;
 
@@ -25,17 +26,17 @@ public class CardController {
 
     @GetMapping("/cards")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<?> getCards() {
+    public ResponseEntity<?> getCards() throws UserDoesNotExistException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        List<Card> cards = cardRepository.getCardsByUser_Username(username);
+        List<CardDTO> cards = cardService.getCards(username);
         return new ResponseEntity<>(cards, HttpStatusCode.valueOf(200));
     }
 
     @PostMapping("/card")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createCard(@RequestBody CardDTO cardDTO) throws Exception {
-        Card card = cardService.createCard(cardDTO);
+        CardDTO card = cardService.createCard(cardDTO);
 
         return new ResponseEntity<>(card, HttpStatusCode.valueOf(200));
     }
