@@ -121,6 +121,13 @@
             <artifactId>vavr</artifactId>
             <version>0.10.4</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.crypto.tink/tink -->
+        <dependency>
+            <groupId>com.google.crypto.tink</groupId>
+            <artifactId>tink</artifactId>
+            <version>1.16.0</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
