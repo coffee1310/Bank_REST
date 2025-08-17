@@ -5,9 +5,11 @@ import com.example.bank_rest.entity.Card;
 import com.example.bank_rest.exception.UserDoesNotExistException;
 import com.example.bank_rest.repository.CardRepository;
 import com.example.bank_rest.util.Encryptor.AesCardEncryptor;
+import com.example.bank_rest.util.Encryptor.DeterministicEncryptor;
 import com.example.bank_rest.util.card_masker.CardMasker;
 import com.example.bank_rest.util.converter.DTOConverterFactory;
 import com.example.bank_rest.util.converter.EntityConverter;
+import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -31,23 +33,29 @@ public class CardService {
     private final DTOConverterFactory converterFactory;
     private final CardMasker cardMasker;
     private final AesCardEncryptor aesCardEncryptor;
+    private final DeterministicEncryptor deterministicEncryptor;
     private final Validator validator;
 
     private final CardRepository cardRepository;
 
-    public CardDTO createCard(CardDTO dto) throws Exception {
+    @Transactional
+    public CardDTO createCard(CardDTO dto) throws UserDoesNotExistException {
         dto.setMaskedNumber(cardMasker.mask(dto.getCard_number()));
-        dto.setCard_number(dto.getCard_number());
         dto.setStatus("ACTIVE");
-        dto.setBalance(BigDecimal.valueOf(0.00));
-        dto.setUser_id(dto.getUser_id());
+        dto.setBalance(BigDecimal.ZERO);
 
         dto.validate(validator);
-        dto.setCard_number(aesCardEncryptor.encrypt(dto.getCard_number()));
-        EntityConverter<Card, CardDTO> converter = converterFactory.getConverter(Card.class, CardDTO.class);
 
+        String encryptedCardNumber = Try.of(() -> deterministicEncryptor.encrypt(dto.getCard_number())).get();
+        if (cardRepository.existsCardByCardNumber(encryptedCardNumber)) {
+            throw new IllegalArgumentException("Карта с таким номером уже существует");
+        }
+
+        dto.setCard_number(encryptedCardNumber);
+        EntityConverter<Card, CardDTO> converter = converterFactory.getConverter(Card.class, CardDTO.class);
         Card card = converter.toEntity(dto);
         cardRepository.save(card);
+
         return dto;
     }
 

@@ -13,7 +13,7 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 @Component
-public class AesCardEncryptor implements IEncryptor{
+public class AesCardEncryptor implements IEncryptor, IDecryptor {
 
     private static final String ALGORITHM = "AES/GCM/NoPadding";
     private static final int GCM_TAG_LENGTH = 128;
@@ -28,6 +28,7 @@ public class AesCardEncryptor implements IEncryptor{
         }
         this.secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
     }
+
     @Override
     public String encrypt(String cardNumber) throws Exception {
         byte[] iv = new byte[IV_LENGTH];
