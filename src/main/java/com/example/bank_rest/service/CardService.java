@@ -68,4 +68,12 @@ public class CardService {
                 .filter(Optional::isPresent)
                 .map(Optional::get).toList();
     }
+
+    public Optional<CardDTO> getCard(Long id) {
+        EntityConverter<Card, CardDTO> converter = converterFactory.getConverter(Card.class, CardDTO.class);
+
+        Card card = cardRepository.getCardsById(id);
+        CardDTO cardDTO = converter.toDto(card);
+        return Optional.of(cardDTO);
+    }
 }
