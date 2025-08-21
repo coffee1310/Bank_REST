@@ -79,11 +79,15 @@ public class CardService {
         return Optional.of(cardDTO);
     }
 
+    @Transactional
     public Optional<CardDTO> setCardStatus(Long id, String status) throws CardNotFoundException {
         EntityConverter<Card, CardDTO> converter = converterFactory.getConverter(Card.class, CardDTO.class);
 
-        Card card = cardRepository.setCardStatusById(status, id)
+        Card card = cardRepository.getCardsById(id)
                 .orElseThrow(() -> new CardNotFoundException("Card with this id was not found"));
+
+        cardRepository.setCardStatusById(status, id);
+
         return Optional.of(converter.toDto(card));
     }
 }

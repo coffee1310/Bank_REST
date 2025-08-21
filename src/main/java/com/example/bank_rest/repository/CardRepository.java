@@ -4,6 +4,7 @@ import com.example.bank_rest.entity.Card;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,6 +17,6 @@ public interface CardRepository extends JpaRepository<Card, Long> {
     Boolean existsCardByCardNumber(String cardNumber);
 
     @Modifying
-    @Query("update Card c set c.status = ?1 where c.id = ?2")
-    Optional<Card> setCardStatusById(String status, Long id);
+    @Query("update Card c set c.status = :status where c.id = :id")
+    void setCardStatusById(@Param("status") String status, @Param("id") Long id);
 }
