@@ -24,7 +24,6 @@ import java.util.List;
 @RequestMapping("/api/card")
 public class CardController {
 
-    private final CardRepository cardRepository;
     private final CardService cardService;
 
     @GetMapping("/cards")
@@ -41,14 +40,21 @@ public class CardController {
     public ResponseEntity<?> createCard(@RequestBody CardDTO cardDTO) throws Exception {
         CardDTO card = cardService.createCard(cardDTO);
 
-        return new ResponseEntity<>(card, HttpStatus.OK);
+        return new ResponseEntity<>(card, HttpStatus.CREATED);
     }
 
     @GetMapping("/card/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getCard(@PathVariable Long id ) throws CardNotFoundException {
-        CardDTO card = cardService.getCard(id)
-                .orElseThrow(() -> new CardNotFoundException("Card with this id was not found"));
+    public ResponseEntity<?> getCard(@PathVariable Long id) throws CardNotFoundException {
+        CardDTO card = cardService.getCard(id).get();
+
+        return new ResponseEntity<>(card, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/card/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> blockCard(@PathVariable Long id) throws CardNotFoundException {
+        CardDTO card = cardService.setCardStatus(id, "BLOCKED").get();
 
         return new ResponseEntity<>(card, HttpStatus.OK);
     }

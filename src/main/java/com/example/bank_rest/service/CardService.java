@@ -2,6 +2,7 @@ package com.example.bank_rest.service;
 
 import com.example.bank_rest.dto.CardDTO;
 import com.example.bank_rest.entity.Card;
+import com.example.bank_rest.exception.CardNotFoundException;
 import com.example.bank_rest.exception.UserDoesNotExistException;
 import com.example.bank_rest.repository.CardRepository;
 import com.example.bank_rest.util.Encryptor.AesCardEncryptor;
@@ -69,11 +70,20 @@ public class CardService {
                 .map(Optional::get).toList();
     }
 
-    public Optional<CardDTO> getCard(Long id) {
+    public Optional<CardDTO> getCard(Long id) throws CardNotFoundException{
         EntityConverter<Card, CardDTO> converter = converterFactory.getConverter(Card.class, CardDTO.class);
 
-        Card card = cardRepository.getCardsById(id);
+        Card card = cardRepository.getCardsById(id)
+                .orElseThrow(() -> new CardNotFoundException("Card with this id was not found"));
         CardDTO cardDTO = converter.toDto(card);
         return Optional.of(cardDTO);
+    }
+
+    public Optional<CardDTO> setCardStatus(Long id, String status) throws CardNotFoundException {
+        EntityConverter<Card, CardDTO> converter = converterFactory.getConverter(Card.class, CardDTO.class);
+
+        Card card = cardRepository.setCardStatusById(status, id)
+                .orElseThrow(() -> new CardNotFoundException("Card with this id was not found"));
+        return Optional.of(converter.toDto(card));
     }
 }
