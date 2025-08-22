@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_table_transfer
+      author: anton.golovin
+      changes:
+        - createTable:
+            tableName: transfers
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: card_from
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_transfers_cards_from
+                    references: cards(id)
+
+              - column:
+                  name: card_to
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_transfers_cards_to
+                    references: cards(id)
+
+              - column:
+                  name: amount
+                  type: DECIMAL(15,2)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: "CURRENT_TIMESTAMP"
+                  constraints:
+                    nullable: false
+        - sql:
+            sql: "ALTER TABLE transfers ADD CONSTRAINT ck_transfers_amount CHECK (amount > 0.0)"
+
+        - sql:
+            sql: "ALTER TABLE transfers ADD CONSTRAINT ck_transfers_cards CHECK (card_from <> card_to)"
