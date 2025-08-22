@@ -13,7 +13,8 @@ import java.util.Optional;
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long> {
     List<Card> getCardsByUser_Username(String userUsername);
-    Optional<Card> getCardsById(Long id);
+    Optional<Card> getCardById(Long id);
+    Optional<Card> getCardByIdAndUser_Username(Long id, String userUsername);
     Boolean existsCardByCardNumber(String cardNumber);
 
     @Modifying

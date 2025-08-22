@@ -85,7 +85,7 @@ public class CardControllerTest {
         Long userId = 1L;
         CardDTO cardDTO = createCardDTO();
 
-        when(cardService.getCard(userId)).thenReturn(Optional.of(cardDTO));
+        when(cardService.getCard(userId)).thenReturn(cardDTO);
         mockMvc.perform(get("/api/card/card/{id}", userId))
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.status").value("ACTIVE"))

@@ -33,7 +33,6 @@ public class CardService {
 
     private final DTOConverterFactory converterFactory;
     private final CardMasker cardMasker;
-    private final AesCardEncryptor aesCardEncryptor;
     private final DeterministicEncryptor deterministicEncryptor;
     private final Validator validator;
 
@@ -70,24 +69,33 @@ public class CardService {
                 .map(Optional::get).toList();
     }
 
-    public Optional<CardDTO> getCard(Long id) throws CardNotFoundException{
+    public CardDTO getCard(Long id) throws CardNotFoundException{
         EntityConverter<Card, CardDTO> converter = converterFactory.getConverter(Card.class, CardDTO.class);
 
-        Card card = cardRepository.getCardsById(id)
+        Card card = cardRepository.getCardById(id)
                 .orElseThrow(() -> new CardNotFoundException("Card with this id was not found"));
-        CardDTO cardDTO = converter.toDto(card);
-        return Optional.of(cardDTO);
+        return converter.toDto(card);
     }
 
     @Transactional
-    public Optional<CardDTO> setCardStatus(Long id, String status) throws CardNotFoundException {
+    public CardDTO setCardStatus(Long id, String status) throws CardNotFoundException {
         EntityConverter<Card, CardDTO> converter = converterFactory.getConverter(Card.class, CardDTO.class);
 
-        Card card = cardRepository.getCardsById(id)
+        Card card = cardRepository.getCardById(id)
                 .orElseThrow(() -> new CardNotFoundException("Card with this id was not found"));
 
         cardRepository.setCardStatusById(status, id);
+        card.setStatus(status);
 
-        return Optional.of(converter.toDto(card));
+        return converter.toDto(card);
+    }
+
+    public CardDTO getCardByIdAndUsername(Long id, String username) throws CardNotFoundException {
+        EntityConverter<Card, CardDTO> converter = converterFactory.getConverter(Card.class, CardDTO.class);
+
+        Card card = cardRepository.getCardByIdAndUser_Username(id, username)
+                .orElseThrow(() -> new CardNotFoundException("Card with this id was not found"));
+
+        return converter.toDto(card);
     }
 }

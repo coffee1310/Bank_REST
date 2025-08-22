@@ -35,6 +35,7 @@ public class CardConverter implements EntityConverter<Card, CardDTO> {
         CardDTO cardDTO = new CardDTO();
         cardDTO.setId(entity.getId());
         cardDTO.setCard_number(entity.getCardNumber());
+        cardDTO.setBalance(entity.getBalance());
         cardDTO.setExpiry_date(entity.getExpiryDate());
         cardDTO.setMaskedNumber(entity.getMaskedNumber());
         cardDTO.setStatus(entity.getStatus());
