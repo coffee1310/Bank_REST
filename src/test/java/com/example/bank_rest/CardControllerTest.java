@@ -5,6 +5,7 @@ import com.example.bank_rest.controller.CardController;
 import com.example.bank_rest.dto.CardDTO;
 import com.example.bank_rest.entity.Card;
 import com.example.bank_rest.entity.User;
+import com.example.bank_rest.repository.CardRepository;
 import com.example.bank_rest.security.JwtAuthenticationFilter;
 import com.example.bank_rest.security.JwtService;
 import com.example.bank_rest.service.CardService;
@@ -39,6 +40,9 @@ public class CardControllerTest {
     private CardService cardService;
 
     @MockitoBean
+    private CardRepository cardRepository;
+
+    @MockitoBean
     private JwtService jwtService;
 
     @MockitoBean
@@ -63,7 +67,7 @@ public class CardControllerTest {
                 cardDTO
         ));
 
-        mockMvc.perform(get("/api/card/cards"))
+        mockMvc.perform(get("/api/card"))
                 .andExpect(jsonPath("$[0].id").isNumber())
                 .andExpect(jsonPath("$[0].status").value("ACTIVE"))
                 .andExpect(jsonPath("$[0].card_number").value("1234 5678 9012 3456"))
@@ -77,7 +81,7 @@ public class CardControllerTest {
         CardDTO cardDTO = createCardDTO();
 
         when(cardService.getCard(userId)).thenReturn(cardDTO);
-        mockMvc.perform(get("/api/card/card/{id}", userId))
+        mockMvc.perform(get("/api/card/{id}", userId))
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.status").value("ACTIVE"))
                 .andExpect(jsonPath("$.card_number").value("1234 5678 9012 3456"))
@@ -91,7 +95,7 @@ public class CardControllerTest {
 
         when(cardService.createCard(any(CardDTO.class))).thenReturn(cardDTO);
 
-        mockMvc.perform(post("/api/card/card")
+        mockMvc.perform(post("/api/card")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(cardDTO)))
                 .andDo(print())

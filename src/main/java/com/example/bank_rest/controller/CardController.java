@@ -69,5 +69,4 @@ public class CardController {
         return new ResponseEntity<>(cardDTO.getBalance().toString(), HttpStatus.OK);
     }
 
-
 }

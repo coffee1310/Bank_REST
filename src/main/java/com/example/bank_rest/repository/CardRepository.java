@@ -16,8 +16,10 @@ public interface CardRepository extends JpaRepository<Card, Long> {
     Optional<Card> getCardById(Long id);
     Optional<Card> getCardByIdAndUser_Username(Long id, String userUsername);
     Boolean existsCardByCardNumber(String cardNumber);
+    Boolean existsCardById(Long id);
 
     @Modifying
     @Query("update Card c set c.status = :status where c.id = :id")
     void setCardStatusById(@Param("status") String status, @Param("id") Long id);
+
 }
