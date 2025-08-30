@@ -1,5 +1,6 @@
 package com.example.bank_rest.entity;
 
+import com.example.bank_rest.exception.InsufficientFundsException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
@@ -15,7 +16,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Entity
 @Table(name = "cards")
-public class Card {
+public class Card implements IBalanceOperations {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,5 +56,18 @@ public class Card {
     @Override
     public final int hashCode() {
         return this instanceof HibernateProxy proxy ? proxy.getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    }
+
+    @Override
+    public void deposit(BigDecimal amount) {
+        balance = balance.add(amount);
+    }
+
+    @Override
+    public void withdraw(BigDecimal amount) throws InsufficientFundsException {
+        if (balance.compareTo(amount) < 0) {
+            throw new InsufficientFundsException("Insufficient funds");
+        }
+        balance = balance.add(amount);
     }
 }

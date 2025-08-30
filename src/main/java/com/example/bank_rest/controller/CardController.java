@@ -1,11 +1,12 @@
 package com.example.bank_rest.controller;
 
 import com.example.bank_rest.dto.CardDTO;
-import com.example.bank_rest.exception.CardNotFoundException;
+import com.example.bank_rest.dto.TransferDTO;
+import com.example.bank_rest.exception.CardDoesNotFound;
 import com.example.bank_rest.exception.UserDoesNotExistException;
-import com.example.bank_rest.repository.CardRepository;
 import com.example.bank_rest.service.CardService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,6 @@ import java.util.List;
 public class CardController {
 
     private final CardService cardService;
-    private final CardRepository cardRepository;
 
     @GetMapping
     public ResponseEntity<?> getCards() throws UserDoesNotExistException {
@@ -43,30 +43,35 @@ public class CardController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getCard(@PathVariable Long id) throws CardNotFoundException {
+    public ResponseEntity<?> getCard(@PathVariable Long id) throws CardDoesNotFound {
         CardDTO card = cardService.getCard(id);
         return new ResponseEntity<>(card, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> blockCard(@PathVariable Long id) throws CardNotFoundException {
+    public ResponseEntity<?> blockCard(@PathVariable Long id) throws CardDoesNotFound {
         CardDTO card = cardService.setCardStatus(id, "BLOCKED");
         return new ResponseEntity<>(card, HttpStatus.OK);
     }
 
     @GetMapping("/{id}/number")
-    public ResponseEntity<?> getCardNumber(@PathVariable Long id) throws CardNotFoundException {
+    public ResponseEntity<?> getCardNumber(@PathVariable Long id) throws CardDoesNotFound {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         CardDTO cardDTO = cardService.getCardByIdAndUsername(id, username);
         return new ResponseEntity<>(cardDTO.getMaskedNumber(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/balance")
-    public ResponseEntity<?> getCardBalance(@PathVariable Long id) throws CardNotFoundException {
+    public ResponseEntity<?> getCardBalance(@PathVariable Long id) throws CardDoesNotFound {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         CardDTO cardDTO = cardService.getCardByIdAndUsername(id, username);
         return new ResponseEntity<>(cardDTO.getBalance().toString(), HttpStatus.OK);
     }
 
+//    @PostMapping("/transfer")
+//    public ResponseEntity<?> transferMoney(@Valid @RequestBody TransferDTO transferDTO) {
+//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//
+//    }
 }

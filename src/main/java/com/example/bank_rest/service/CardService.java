@@ -2,28 +2,21 @@ package com.example.bank_rest.service;
 
 import com.example.bank_rest.dto.CardDTO;
 import com.example.bank_rest.entity.Card;
-import com.example.bank_rest.exception.CardNotFoundException;
+import com.example.bank_rest.exception.CardDoesNotFound;
 import com.example.bank_rest.exception.UserDoesNotExistException;
 import com.example.bank_rest.repository.CardRepository;
-import com.example.bank_rest.util.Encryptor.AesCardEncryptor;
 import com.example.bank_rest.util.Encryptor.DeterministicEncryptor;
 import com.example.bank_rest.util.card_masker.CardMasker;
 import com.example.bank_rest.util.converter.DTOConverterFactory;
 import com.example.bank_rest.util.converter.EntityConverter;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.convert.converter.ConverterFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import io.vavr.control.Try;
 
@@ -69,20 +62,20 @@ public class CardService {
                 .map(Optional::get).toList();
     }
 
-    public CardDTO getCard(Long id) throws CardNotFoundException{
+    public CardDTO getCard(Long id) throws CardDoesNotFound {
         EntityConverter<Card, CardDTO> converter = converterFactory.getConverter(Card.class, CardDTO.class);
 
         Card card = cardRepository.getCardById(id)
-                .orElseThrow(() -> new CardNotFoundException("Card with this id was not found"));
+                .orElseThrow(() -> new CardDoesNotFound("Card with this id was not found"));
         return converter.toDto(card);
     }
 
     @Transactional
-    public CardDTO setCardStatus(Long id, String status) throws CardNotFoundException {
+    public CardDTO setCardStatus(Long id, String status) throws CardDoesNotFound {
         EntityConverter<Card, CardDTO> converter = converterFactory.getConverter(Card.class, CardDTO.class);
 
         Card card = cardRepository.getCardById(id)
-                .orElseThrow(() -> new CardNotFoundException("Card with this id was not found"));
+                .orElseThrow(() -> new CardDoesNotFound("Card with this id was not found"));
 
         cardRepository.setCardStatusById(status, id);
         card.setStatus(status);
@@ -90,11 +83,11 @@ public class CardService {
         return converter.toDto(card);
     }
 
-    public CardDTO getCardByIdAndUsername(Long id, String username) throws CardNotFoundException {
+    public CardDTO getCardByIdAndUsername(Long id, String username) throws CardDoesNotFound {
         EntityConverter<Card, CardDTO> converter = converterFactory.getConverter(Card.class, CardDTO.class);
 
         Card card = cardRepository.getCardByIdAndUser_Username(id, username)
-                .orElseThrow(() -> new CardNotFoundException("Card with this id was not found"));
+                .orElseThrow(() -> new CardDoesNotFound("Card with this id was not found"));
 
         return converter.toDto(card);
     }
