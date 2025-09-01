@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: v5__add_version_to_cards
+      author: anton.golovin
+      changes:
+        - addColumn:
+            tableName: cards
+            columns:
+              - column:
+                  name: version
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    defaultValue: 0

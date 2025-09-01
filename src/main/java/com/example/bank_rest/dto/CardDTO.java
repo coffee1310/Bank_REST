@@ -31,6 +31,7 @@ public class CardDTO implements Validatable {
     private BigDecimal balance;
 
     @NotBlank
+    @Pattern(regexp = "ACTIVE|EXPIRED|BLOCKED", message = "Status must be either ACTIVE or BLOCKED")
     private String status;
 
     @NotNull

@@ -42,6 +42,9 @@ public class Card implements IBalanceOperations {
     @ToString.Exclude
     private User user;
 
+    @Version
+    private Long version;
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
