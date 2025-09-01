@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_table_card_status_requests
+      author: anton.golovin
+      changes:
+        - createTable:
+            tableName: card_status_request
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: card_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_card_status_requests_card
+                    references: cards(id)
+              - column:
+                  name: status
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+        - sql:
+            "ALTER TABLE card_status_request ADD CONSTRAINT ck_card_status_request_status CHECK (status IN ('ACTIVE', 'BLOCKED', 'EXPIRED'));"
