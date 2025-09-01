@@ -68,6 +68,6 @@ public class Card implements IBalanceOperations {
         if (balance.compareTo(amount) < 0) {
             throw new InsufficientFundsException("Insufficient funds");
         }
-        balance = balance.add(amount);
+        balance = balance.subtract(amount);
     }
 }

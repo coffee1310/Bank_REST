@@ -68,10 +68,4 @@ public class CardController {
         CardDTO cardDTO = cardService.getCardByIdAndUsername(id, username);
         return new ResponseEntity<>(cardDTO.getBalance().toString(), HttpStatus.OK);
     }
-
-//    @PostMapping("/transfer")
-//    public ResponseEntity<?> transferMoney(@Valid @RequestBody TransferDTO transferDTO) {
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-//
-//    }
 }

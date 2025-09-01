@@ -32,7 +32,6 @@ public class TransferDTO implements Validatable {
     @PastOrPresent
     private LocalDateTime created_at;
 
-
     @Override
     public void validate(Validator validator) {
         Set<ConstraintViolation<TransferDTO>> violations = validator.validate(this);

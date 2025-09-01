@@ -13,17 +13,19 @@ import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @AllArgsConstructor
 @Transactional
 public class TransferService {
 
     private final TransferRepository transferRepository;
-    public final CardRepository cardRepository;
     private final Validator validator;
     private final DTOConverterFactory converterFactory;
 
     public Transfer transferMoney(TransferDTO transferDTO) {
+        transferDTO.setCreated_at(LocalDateTime.now().minusMinutes(1));
         transferDTO.validate(validator);
         Transfer transfer = getConverter().toEntity(transferDTO);
         Card card_from = transfer.getCard_from();
