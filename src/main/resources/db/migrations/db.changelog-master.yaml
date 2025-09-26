@@ -8,3 +8,5 @@ databaseChangeLog:
       file: db/migrations/v3__add_table_transfer.yaml
   - include:
       file: db/migrations/v4__add_table_card_status_request.yaml
+  - include:
+      file: db/migrations/v5__add_version_to_cards.yaml

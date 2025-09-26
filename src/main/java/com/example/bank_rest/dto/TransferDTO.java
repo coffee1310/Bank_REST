@@ -20,22 +20,18 @@ public class TransferDTO implements Validatable {
 
     @CardExists
     @NotNull
-    @NotBlank
     private Long card_from_id;
 
     @CardExists
     @NotNull
-    @NotBlank
     private Long card_to_id;
 
     @Min(1)
     @NotNull
-    @NotBlank
     private BigDecimal amount;
 
     @PastOrPresent
     @NotNull
-    @NotBlank
     private LocalDateTime created_at;
 
     @Override

@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: v5__add_version_to_cards
+      id: v5.1__add_version_to_cards
       author: anton.golovin
       changes:
         - addColumn:
@@ -10,5 +10,26 @@ databaseChangeLog:
                   name: version
                   type: BIGINT
                   constraints:
-                    nullable: false
+                    nullable: true
                     defaultValue: 0
+
+  - changeSet:
+      id: v5.2__add_filling_out_the_version_field
+      author: anton.golovin
+      changes:
+        - update:
+            tableName: cards
+            columns:
+              - column:
+                  name: version
+                  valueNumeric: 1
+            where: version IS NULL
+
+  - changeSet:
+      id: v5.3__add_not_null_constraint_to_the_version_field
+      author: anton.golovin
+      changes:
+        - addNotNullConstraint:
+            tableName: cards
+            columnName: version
+            columnDataType: BIGINT\\

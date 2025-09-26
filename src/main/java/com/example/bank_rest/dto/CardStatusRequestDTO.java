@@ -19,9 +19,8 @@ public class CardStatusRequestDTO implements Validatable {
 
     private Long id;
 
-    @CardExists
     @NotNull
-    @NotBlank
+    @CardExists
     private Long card_id;
 
     @Pattern(regexp = "ACTIVE|EXPIRED|BLOCKED", message = "Status must be either ACTIVE or BLOCKED")
