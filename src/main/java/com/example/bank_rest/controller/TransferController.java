@@ -23,7 +23,7 @@ public class TransferController {
 
     @PostMapping
     public ResponseEntity<?> createTransfer(@RequestBody TransferDTO transferDTO) {
-        Transfer transfer = transferService.transferMoney(transferDTO);
+        TransferDTO transfer = transferService.transferMoney(transferDTO);
         return new ResponseEntity<>(transfer, HttpStatus.CREATED);
     }
 }
